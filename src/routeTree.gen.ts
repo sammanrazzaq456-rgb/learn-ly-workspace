@@ -15,7 +15,9 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedUploadRouteImport } from './routes/_authenticated/upload'
+import { Route as AuthenticatedHistoryRouteImport } from './routes/_authenticated/history'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedDocumentsDocumentIdIndexRouteImport } from './routes/_authenticated/documents.$documentId.index'
 import { Route as AuthenticatedDocumentsDocumentIdProcessingRouteImport } from './routes/_authenticated/documents.$documentId.processing'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -47,11 +49,22 @@ const AuthenticatedUploadRoute = AuthenticatedUploadRouteImport.update({
   path: '/upload',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedHistoryRoute = AuthenticatedHistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedDocumentsDocumentIdIndexRoute =
+  AuthenticatedDocumentsDocumentIdIndexRouteImport.update({
+    id: '/documents/$documentId/',
+    path: '/documents/$documentId/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedDocumentsDocumentIdProcessingRoute =
   AuthenticatedDocumentsDocumentIdProcessingRouteImport.update({
     id: '/documents/$documentId/processing',
@@ -65,8 +78,10 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/history': typeof AuthenticatedHistoryRoute
   '/upload': typeof AuthenticatedUploadRoute
   '/documents/$documentId/processing': typeof AuthenticatedDocumentsDocumentIdProcessingRoute
+  '/documents/$documentId/': typeof AuthenticatedDocumentsDocumentIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -74,8 +89,10 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/history': typeof AuthenticatedHistoryRoute
   '/upload': typeof AuthenticatedUploadRoute
   '/documents/$documentId/processing': typeof AuthenticatedDocumentsDocumentIdProcessingRoute
+  '/documents/$documentId': typeof AuthenticatedDocumentsDocumentIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -85,8 +102,10 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/history': typeof AuthenticatedHistoryRoute
   '/_authenticated/upload': typeof AuthenticatedUploadRoute
   '/_authenticated/documents/$documentId/processing': typeof AuthenticatedDocumentsDocumentIdProcessingRoute
+  '/_authenticated/documents/$documentId/': typeof AuthenticatedDocumentsDocumentIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -96,8 +115,10 @@ export interface FileRouteTypes {
     | '/auth'
     | '/reset-password'
     | '/dashboard'
+    | '/history'
     | '/upload'
     | '/documents/$documentId/processing'
+    | '/documents/$documentId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -105,8 +126,10 @@ export interface FileRouteTypes {
     | '/auth'
     | '/reset-password'
     | '/dashboard'
+    | '/history'
     | '/upload'
     | '/documents/$documentId/processing'
+    | '/documents/$documentId'
   id:
     | '__root__'
     | '/'
@@ -115,8 +138,10 @@ export interface FileRouteTypes {
     | '/auth'
     | '/reset-password'
     | '/_authenticated/dashboard'
+    | '/_authenticated/history'
     | '/_authenticated/upload'
     | '/_authenticated/documents/$documentId/processing'
+    | '/_authenticated/documents/$documentId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -171,11 +196,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUploadRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/history': {
+      id: '/_authenticated/history'
+      path: '/history'
+      fullPath: '/history'
+      preLoaderRoute: typeof AuthenticatedHistoryRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/documents/$documentId/': {
+      id: '/_authenticated/documents/$documentId/'
+      path: '/documents/$documentId'
+      fullPath: '/documents/$documentId/'
+      preLoaderRoute: typeof AuthenticatedDocumentsDocumentIdIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/documents/$documentId/processing': {
@@ -190,15 +229,20 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedHistoryRoute: typeof AuthenticatedHistoryRoute
   AuthenticatedUploadRoute: typeof AuthenticatedUploadRoute
   AuthenticatedDocumentsDocumentIdProcessingRoute: typeof AuthenticatedDocumentsDocumentIdProcessingRoute
+  AuthenticatedDocumentsDocumentIdIndexRoute: typeof AuthenticatedDocumentsDocumentIdIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedHistoryRoute: AuthenticatedHistoryRoute,
   AuthenticatedUploadRoute: AuthenticatedUploadRoute,
   AuthenticatedDocumentsDocumentIdProcessingRoute:
     AuthenticatedDocumentsDocumentIdProcessingRoute,
+  AuthenticatedDocumentsDocumentIdIndexRoute:
+    AuthenticatedDocumentsDocumentIdIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
