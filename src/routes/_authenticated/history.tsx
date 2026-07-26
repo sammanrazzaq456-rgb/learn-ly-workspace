@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { EmptyState, ErrorState } from "@/components/states";
 import { supabase } from "@/integrations/supabase/client";
 import { AI_MODE_LABEL } from "@/lib/ai-modes";
 import { formatBytes } from "@/lib/document-parsing";
@@ -159,12 +160,11 @@ function History() {
         </div>
 
         {isError ? (
-          <Card>
-            <CardContent className="flex flex-col items-center gap-3 py-14 text-center">
-              <p className="text-sm text-muted-foreground">We couldn't load your history.</p>
-              <Button onClick={() => refetch()}>Try again</Button>
-            </CardContent>
-          </Card>
+          <ErrorState
+            title="We couldn't load your history"
+            description="This is usually a temporary connection problem."
+            onRetry={() => refetch()}
+          />
         ) : isLoading ? (
           <div className="space-y-3">
             <Skeleton className="h-20 w-full" />
@@ -172,19 +172,37 @@ function History() {
             <Skeleton className="h-20 w-full" />
           </div>
         ) : rows.length === 0 ? (
-          <Card>
-            <CardContent className="flex flex-col items-center gap-3 py-16 text-center">
-              <Clock3 className="h-9 w-9 text-muted-foreground/60" />
-              <p className="text-sm text-muted-foreground">
-                {data && data.documents.length > 0
-                  ? "No documents match those filters."
-                  : "You haven't uploaded anything yet."}
-              </p>
-              <Button asChild>
-                <Link to="/upload">Upload a document</Link>
-              </Button>
-            </CardContent>
-          </Card>
+          data && data.documents.length > 0 ? (
+            <EmptyState
+              illustration={false}
+              icon={Clock3}
+              title="No matches"
+              description="No documents match your search or filters. Try a different term or clear the filters."
+              action={
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setSearch("");
+                    setFeature("all");
+                    setRange("all");
+                  }}
+                >
+                  Clear filters
+                </Button>
+              }
+            />
+          ) : (
+            <EmptyState
+              title="You haven't uploaded anything yet"
+              description="Your documents and everything Lumen makes from them will live here."
+              action={
+                <Button asChild>
+                  <Link to="/upload">Upload a document</Link>
+                </Button>
+              }
+            />
+          )
         ) : (
           <div className="space-y-3">
             {rows.map((row) => (
