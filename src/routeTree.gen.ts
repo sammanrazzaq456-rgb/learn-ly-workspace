@@ -16,6 +16,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedUploadRouteImport } from './routes/_authenticated/upload'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedDocumentsDocumentIdProcessingRouteImport } from './routes/_authenticated/documents.$documentId.processing'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -51,6 +52,12 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedDocumentsDocumentIdProcessingRoute =
+  AuthenticatedDocumentsDocumentIdProcessingRouteImport.update({
+    id: '/documents/$documentId/processing',
+    path: '/documents/$documentId/processing',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -59,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/upload': typeof AuthenticatedUploadRoute
+  '/documents/$documentId/processing': typeof AuthenticatedDocumentsDocumentIdProcessingRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -67,6 +75,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/upload': typeof AuthenticatedUploadRoute
+  '/documents/$documentId/processing': typeof AuthenticatedDocumentsDocumentIdProcessingRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -77,6 +86,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/upload': typeof AuthenticatedUploadRoute
+  '/_authenticated/documents/$documentId/processing': typeof AuthenticatedDocumentsDocumentIdProcessingRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -87,8 +97,16 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/dashboard'
     | '/upload'
+    | '/documents/$documentId/processing'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/auth' | '/reset-password' | '/dashboard' | '/upload'
+  to:
+    | '/'
+    | '/about'
+    | '/auth'
+    | '/reset-password'
+    | '/dashboard'
+    | '/upload'
+    | '/documents/$documentId/processing'
   id:
     | '__root__'
     | '/'
@@ -98,6 +116,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/_authenticated/dashboard'
     | '/_authenticated/upload'
+    | '/_authenticated/documents/$documentId/processing'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -159,17 +178,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/documents/$documentId/processing': {
+      id: '/_authenticated/documents/$documentId/processing'
+      path: '/documents/$documentId/processing'
+      fullPath: '/documents/$documentId/processing'
+      preLoaderRoute: typeof AuthenticatedDocumentsDocumentIdProcessingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedUploadRoute: typeof AuthenticatedUploadRoute
+  AuthenticatedDocumentsDocumentIdProcessingRoute: typeof AuthenticatedDocumentsDocumentIdProcessingRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedUploadRoute: AuthenticatedUploadRoute,
+  AuthenticatedDocumentsDocumentIdProcessingRoute:
+    AuthenticatedDocumentsDocumentIdProcessingRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
