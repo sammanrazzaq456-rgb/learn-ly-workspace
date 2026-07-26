@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
-import { AI_MODE_LABEL } from "@/lib/ai-modes";
+import { AI_MODE_LABEL, type AiMode } from "@/lib/ai-modes";
 import {
   generateInsights,
   generateStudyMaterials,
@@ -42,7 +42,7 @@ const STEPS = [
 
 function Processing() {
   const { documentId } = Route.useParams();
-  const { mode } = Route.useSearch();
+  const { mode } = Route.useSearch() as { mode: AiMode };
   const navigate = useNavigate();
   const cancelled = useRef(false);
   const started = useRef(false);
