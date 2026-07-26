@@ -80,19 +80,23 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lumen — Study smarter with AI" },
+      { title: "Lumen — Turn any document into study material" },
       {
         name: "description",
-        content: "Turn PDFs, docs and notes into summaries, flashcards and answers with Lumen.",
+        content: "Upload a PDF, DOCX or notes and get AI summaries, explanations, flashcards, quizzes and answers in seconds.",
       },
       { name: "author", content: "Lumen" },
-      { property: "og:title", content: "Lumen — Study smarter with AI" },
+      { property: "og:title", content: "Lumen — Turn any document into study material" },
       {
         property: "og:description",
-        content: "Turn PDFs, docs and notes into summaries, flashcards and answers with Lumen.",
+        content: "Upload a PDF, DOCX or notes and get AI summaries, explanations, flashcards, quizzes and answers in seconds.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Lumen — Turn any document into study material" },
+      { name: "twitter:description", content: "Upload a PDF, DOCX or notes and get AI summaries, explanations, flashcards, quizzes and answers in seconds." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/5146e2ab-6c9c-4c84-abc6-f0af68d935fe/id-preview-5adbad1d--431ec180-b4e1-4d82-8a80-da113b2a2a02.lovable.app-1785101008492.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/5146e2ab-6c9c-4c84-abc6-f0af68d935fe/id-preview-5adbad1d--431ec180-b4e1-4d82-8a80-da113b2a2a02.lovable.app-1785101008492.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
