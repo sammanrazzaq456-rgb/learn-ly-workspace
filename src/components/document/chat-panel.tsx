@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { Markdown } from "@/components/markdown";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { EmptyState, ErrorState, friendlyErrorMessage } from "@/components/states";
 import { supabase } from "@/integrations/supabase/client";
 import { askDocument, suggestQuestions } from "@/lib/ai.functions";
 
@@ -18,7 +19,7 @@ export function ChatPanel({ documentId }: { documentId: string }) {
   const [busy, setBusy] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  const { data: messages, isLoading } = useQuery({
+  const { data: messages, isLoading, isError, refetch } = useQuery({
     queryKey: ["chats", documentId],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -51,7 +52,7 @@ export function ChatPanel({ documentId }: { documentId: string }) {
       await ask({ data: { documentId, message: value } });
       await queryClient.invalidateQueries({ queryKey: ["chats", documentId] });
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Lumen couldn't answer that");
+      toast.error(friendlyErrorMessage(error, "Lumen couldn't answer that"));
     } finally {
       setBusy(false);
     }
@@ -60,7 +61,9 @@ export function ChatPanel({ documentId }: { documentId: string }) {
   return (
     <div className="flex min-h-[32rem] flex-col rounded-2xl border border-border">
       <div className="flex-1 space-y-4 overflow-y-auto p-5">
-        {isLoading ? (
+        {isError ? (
+          <ErrorState title="We couldn't load this conversation" onRetry={() => refetch()} />
+        ) : isLoading ? (
           <p className="text-sm text-muted-foreground">Loading conversation…</p>
         ) : messages && messages.length > 0 ? (
           messages.map((item) => (
@@ -82,12 +85,10 @@ export function ChatPanel({ documentId }: { documentId: string }) {
             </div>
           ))
         ) : (
-          <div className="flex flex-col items-center gap-3 py-14 text-center">
-            <MessagesSquare className="h-9 w-9 text-muted-foreground/60" />
-            <p className="text-sm text-muted-foreground">
-              Ask anything about this document — Lumen answers from its contents.
-            </p>
-          </div>
+          <EmptyState
+            title="Start the conversation"
+            description="Ask anything about this document — Lumen answers only from its contents and shows you the source."
+          />
         )}
         {busy ? (
           <div className="flex items-center gap-2 text-sm text-muted-foreground">

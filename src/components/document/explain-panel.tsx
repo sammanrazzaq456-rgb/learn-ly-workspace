@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { friendlyErrorMessage } from "@/components/states";
 import { supabase } from "@/integrations/supabase/client";
 import { generateExplanation } from "@/lib/ai.functions";
 
@@ -47,7 +48,7 @@ export function ExplainPanel({ documentId, content }: { documentId: string; cont
       await run({ data: { documentId, originalText: text.slice(0, 12000), level: nextLevel } });
       await queryClient.invalidateQueries({ queryKey: ["explanations", documentId] });
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Could not explain this passage");
+      toast.error(friendlyErrorMessage(error, "Could not explain this passage"));
     } finally {
       setBusy(false);
     }

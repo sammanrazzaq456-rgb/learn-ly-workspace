@@ -11,6 +11,7 @@ import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
+import { friendlyErrorMessage } from "@/components/states";
 import { supabase } from "@/integrations/supabase/client";
 import {
   ACCEPTED_TYPES,
@@ -114,7 +115,7 @@ function UploadWorkspace() {
         search: { mode },
       });
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Upload failed");
+      toast.error(friendlyErrorMessage(error, "Upload failed"));
       setBusy(false);
       setProgress(0);
       setStep("");
@@ -157,7 +158,7 @@ function UploadWorkspace() {
         search: { mode },
       });
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Could not save your text");
+      toast.error(friendlyErrorMessage(error, "Could not save your text"));
       setBusy(false);
       setProgress(0);
       setStep("");

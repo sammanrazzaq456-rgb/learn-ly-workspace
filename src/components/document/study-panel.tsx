@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { EmptyState, ErrorState, friendlyErrorMessage } from "@/components/states";
 import { supabase } from "@/integrations/supabase/client";
 import { generateStudyMaterials } from "@/lib/ai.functions";
 import { cn } from "@/lib/utils";
@@ -22,7 +23,7 @@ export function StudyPanel({ documentId }: { documentId: string }) {
   const run = useServerFn(generateStudyMaterials);
   const [busy, setBusy] = useState(false);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["study", documentId],
     queryFn: async () => {
       const { data: rows, error } = await supabase
@@ -51,27 +52,28 @@ export function StudyPanel({ documentId }: { documentId: string }) {
       await queryClient.invalidateQueries({ queryKey: ["study", documentId] });
       toast.success("Study material ready");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Could not build study material");
+      toast.error(friendlyErrorMessage(error, "Could not build study material"));
     } finally {
       setBusy(false);
     }
   }
 
+  if (isError)
+    return <ErrorState title="We couldn't load your study set" onRetry={() => refetch()} />;
+
   if (isLoading) return <Skeletonish />;
 
   if (!data) {
     return (
-      <Card>
-        <CardContent className="flex flex-col items-center gap-3 py-16 text-center">
-          <Brain className="h-9 w-9 text-muted-foreground/60" />
-          <p className="text-sm text-muted-foreground">
-            No study material yet. Lumen can build notes, flashcards, MCQs and practice questions.
-          </p>
+      <EmptyState
+        title="No study material yet"
+        description="Lumen can turn this document into notes, flashcards, MCQs and practice questions."
+        action={
           <Button onClick={generate} disabled={busy}>
             {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : null} Build study set
           </Button>
-        </CardContent>
-      </Card>
+        }
+      />
     );
   }
 
@@ -295,9 +297,5 @@ function QAList({ items }: { items: QA[] }) {
 }
 
 function Empty({ text }: { text: string }) {
-  return (
-    <p className="rounded-2xl border border-dashed border-border py-12 text-center text-sm text-muted-foreground">
-      {text}
-    </p>
-  );
+  return <EmptyState compact illustration={false} icon={Brain} title={text} />;
 }
