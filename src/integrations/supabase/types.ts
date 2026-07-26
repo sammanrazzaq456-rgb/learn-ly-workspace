@@ -14,7 +14,387 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      chats: {
+        Row: {
+          ai_response: string
+          created_at: string
+          document_id: string
+          id: string
+          source_reference: string | null
+          user_id: string
+          user_message: string
+        }
+        Insert: {
+          ai_response: string
+          created_at?: string
+          document_id: string
+          id?: string
+          source_reference?: string | null
+          user_id: string
+          user_message: string
+        }
+        Update: {
+          ai_response?: string
+          created_at?: string
+          document_id?: string
+          id?: string
+          source_reference?: string | null
+          user_id?: string
+          user_message?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chats_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      documents: {
+        Row: {
+          content: string
+          created_at: string
+          file_name: string
+          file_size: number
+          file_type: string
+          file_url: string | null
+          id: string
+          page_count: number | null
+          processing_error: string | null
+          processing_status: string
+          processing_step: string | null
+          upload_date: string
+          user_id: string
+        }
+        Insert: {
+          content?: string
+          created_at?: string
+          file_name: string
+          file_size?: number
+          file_type: string
+          file_url?: string | null
+          id?: string
+          page_count?: number | null
+          processing_error?: string | null
+          processing_status?: string
+          processing_step?: string | null
+          upload_date?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          file_name?: string
+          file_size?: number
+          file_type?: string
+          file_url?: string | null
+          id?: string
+          page_count?: number | null
+          processing_error?: string | null
+          processing_status?: string
+          processing_step?: string | null
+          upload_date?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      explanations: {
+        Row: {
+          created_at: string
+          difficulty_level: string
+          document_id: string
+          explanation: string
+          id: string
+          original_text: string
+          terms: Json
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          difficulty_level?: string
+          document_id: string
+          explanation: string
+          id?: string
+          original_text: string
+          terms?: Json
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          difficulty_level?: string
+          document_id?: string
+          explanation?: string
+          id?: string
+          original_text?: string
+          terms?: Json
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "explanations_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      history: {
+        Row: {
+          ai_feature_used: string
+          document_id: string
+          id: string
+          last_accessed: string
+          user_id: string
+        }
+        Insert: {
+          ai_feature_used: string
+          document_id: string
+          id?: string
+          last_accessed?: string
+          user_id: string
+        }
+        Update: {
+          ai_feature_used?: string
+          document_id?: string
+          id?: string
+          last_accessed?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "history_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      insights: {
+        Row: {
+          created_at: string
+          definitions: Json
+          document_id: string
+          id: string
+          important_dates: Json
+          important_quotes: Json
+          key_ideas: Json
+          people: Json
+          themes: Json
+          timeline: Json
+          user_id: string
+          vocabulary: Json
+        }
+        Insert: {
+          created_at?: string
+          definitions?: Json
+          document_id: string
+          id?: string
+          important_dates?: Json
+          important_quotes?: Json
+          key_ideas?: Json
+          people?: Json
+          themes?: Json
+          timeline?: Json
+          user_id: string
+          vocabulary?: Json
+        }
+        Update: {
+          created_at?: string
+          definitions?: Json
+          document_id?: string
+          id?: string
+          important_dates?: Json
+          important_quotes?: Json
+          key_ideas?: Json
+          people?: Json
+          themes?: Json
+          timeline?: Json
+          user_id?: string
+          vocabulary?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "insights_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
+      study_materials: {
+        Row: {
+          answer_key: Json
+          created_at: string
+          document_id: string
+          flashcards: Json
+          id: string
+          long_questions: Json
+          mcqs: Json
+          notes: string | null
+          short_questions: Json
+          user_id: string
+        }
+        Insert: {
+          answer_key?: Json
+          created_at?: string
+          document_id: string
+          flashcards?: Json
+          id?: string
+          long_questions?: Json
+          mcqs?: Json
+          notes?: string | null
+          short_questions?: Json
+          user_id: string
+        }
+        Update: {
+          answer_key?: Json
+          created_at?: string
+          document_id?: string
+          flashcards?: Json
+          id?: string
+          long_questions?: Json
+          mcqs?: Json
+          notes?: string | null
+          short_questions?: Json
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "study_materials_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      study_progress: {
+        Row: {
+          cards_reviewed: number
+          last_study_date: string | null
+          streak_days: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cards_reviewed?: number
+          last_study_date?: string | null
+          streak_days?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cards_reviewed?: number
+          last_study_date?: string | null
+          streak_days?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      summaries: {
+        Row: {
+          created_at: string
+          document_id: string
+          id: string
+          reading_time: number | null
+          summary_text: string
+          summary_type: string
+          user_id: string
+          word_count: number | null
+        }
+        Insert: {
+          created_at?: string
+          document_id: string
+          id?: string
+          reading_time?: number | null
+          summary_text: string
+          summary_type?: string
+          user_id: string
+          word_count?: number | null
+        }
+        Update: {
+          created_at?: string
+          document_id?: string
+          id?: string
+          reading_time?: number | null
+          summary_text?: string
+          summary_type?: string
+          user_id?: string
+          word_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "summaries_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_settings: {
+        Row: {
+          ai_model: string
+          email_notifications: boolean
+          language: string
+          save_history: boolean
+          study_reminders: boolean
+          theme: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ai_model?: string
+          email_notifications?: boolean
+          language?: string
+          save_history?: boolean
+          study_reminders?: boolean
+          theme?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ai_model?: string
+          email_notifications?: boolean
+          language?: string
+          save_history?: boolean
+          study_reminders?: boolean
+          theme?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
