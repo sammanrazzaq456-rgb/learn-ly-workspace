@@ -10,6 +10,7 @@ import {
   Menu,
   Settings,
   Upload,
+  WifiOff,
   X,
 } from "lucide-react";
 
@@ -41,6 +42,7 @@ export function AppShell({
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState<string | null>(null);
+  const [offline, setOffline] = useState(false);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setEmail(data.user?.email ?? null));
@@ -49,6 +51,17 @@ export function AppShell({
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
+
+  useEffect(() => {
+    const update = () => setOffline(!navigator.onLine);
+    update();
+    window.addEventListener("online", update);
+    window.addEventListener("offline", update);
+    return () => {
+      window.removeEventListener("online", update);
+      window.removeEventListener("offline", update);
+    };
+  }, []);
 
   async function signOut() {
     await queryClient.cancelQueries();
@@ -133,6 +146,12 @@ export function AppShell({
             <ThemeToggle />
           </div>
         </header>
+        {offline ? (
+          <div className="flex items-center justify-center gap-2 bg-destructive/10 px-4 py-2 text-center text-xs font-medium text-destructive">
+            <WifiOff className="h-3.5 w-3.5" />
+            You're offline — Lumen can't reach the server right now.
+          </div>
+        ) : null}
         <main className="px-5 py-8 lg:px-10">{children}</main>
       </div>
     </div>

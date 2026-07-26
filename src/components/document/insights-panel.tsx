@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmptyState, ErrorState, friendlyErrorMessage } from "@/components/states";
 import { supabase } from "@/integrations/supabase/client";
 import { generateInsights } from "@/lib/ai.functions";
 
@@ -16,7 +17,7 @@ export function InsightsPanel({ documentId }: { documentId: string }) {
   const run = useServerFn(generateInsights);
   const [busy, setBusy] = useState(false);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["insights", documentId],
     queryFn: async () => {
       const { data: rows, error } = await supabase
@@ -37,27 +38,28 @@ export function InsightsPanel({ documentId }: { documentId: string }) {
       await queryClient.invalidateQueries({ queryKey: ["insights", documentId] });
       toast.success("Insights extracted");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Could not extract insights");
+      toast.error(friendlyErrorMessage(error, "Could not extract insights"));
     } finally {
       setBusy(false);
     }
   }
 
+  if (isError)
+    return <ErrorState title="We couldn't load these insights" onRetry={() => refetch()} />;
+
   if (isLoading) return <div className="h-64 animate-pulse rounded-2xl bg-muted" />;
 
   if (!data) {
     return (
-      <Card>
-        <CardContent className="flex flex-col items-center gap-3 py-16 text-center">
-          <Sparkles className="h-9 w-9 text-muted-foreground/60" />
-          <p className="text-sm text-muted-foreground">
-            Pull out key ideas, quotes, themes, vocabulary, people and dates.
-          </p>
+      <EmptyState
+        title="No insights extracted yet"
+        description="Pull out key ideas, quotes, themes, vocabulary, people and dates in one pass."
+        action={
           <Button onClick={generate} disabled={busy}>
             {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : null} Extract insights
           </Button>
-        </CardContent>
-      </Card>
+        }
+      />
     );
   }
 

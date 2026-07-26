@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { EmptyState, ErrorState, friendlyErrorMessage } from "@/components/states";
 import { supabase } from "@/integrations/supabase/client";
 import { generateSummary } from "@/lib/ai.functions";
 
@@ -21,7 +22,7 @@ export function SummaryPanel({ documentId, fileName }: { documentId: string; fil
   const [busy, setBusy] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["summaries", documentId],
     queryFn: async () => {
       const { data: rows, error } = await supabase
@@ -43,7 +44,7 @@ export function SummaryPanel({ documentId, fileName }: { documentId: string; fil
       await queryClient.invalidateQueries({ queryKey: ["summaries", documentId] });
       toast.success("Summary ready");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Could not generate summary");
+      toast.error(friendlyErrorMessage(error, "Could not generate summary"));
     } finally {
       setBusy(false);
     }
@@ -91,7 +92,12 @@ export function SummaryPanel({ documentId, fileName }: { documentId: string; fil
         </div>
       </div>
 
-      {isLoading ? (
+      {isError ? (
+        <ErrorState
+          title="We couldn't load your summaries"
+          onRetry={() => refetch()}
+        />
+      ) : isLoading ? (
         <Skeleton className="h-64 w-full" />
       ) : current ? (
         <Card>
@@ -104,17 +110,17 @@ export function SummaryPanel({ documentId, fileName }: { documentId: string; fil
           </CardContent>
         </Card>
       ) : (
-        <Card>
-          <CardContent className="flex flex-col items-center gap-3 py-14 text-center">
-            <ScrollText className="h-9 w-9 text-muted-foreground/60" />
-            <p className="text-sm text-muted-foreground">
-              No {type} summary yet for this document.
-            </p>
+        <EmptyState
+          illustration={false}
+          icon={ScrollText}
+          title={`No ${type} summary yet`}
+          description="Lumen will read the document and write this summary for you."
+          action={
             <Button onClick={generate} disabled={busy}>
               {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : null} Generate summary
             </Button>
-          </CardContent>
-        </Card>
+          }
+        />
       )}
     </div>
   );

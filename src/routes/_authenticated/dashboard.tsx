@@ -16,6 +16,7 @@ import { AppShell } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { EmptyState, ErrorState } from "@/components/states";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -91,12 +92,13 @@ function Dashboard() {
   return (
     <AppShell title="Dashboard" description="Everything you're studying, in one place">
       {isError ? (
-        <Card className="mx-auto max-w-md text-center">
-          <CardContent className="space-y-3 pt-6">
-            <p className="text-sm text-muted-foreground">We couldn't load your dashboard.</p>
-            <Button onClick={() => refetch()}>Try again</Button>
-          </CardContent>
-        </Card>
+        <div className="mx-auto max-w-md">
+          <ErrorState
+            title="We couldn't load your dashboard"
+            description="Your documents are safe. Retry in a second."
+            onRetry={() => refetch()}
+          />
+        </div>
       ) : (
         <div className="space-y-8">
           <section className="rounded-3xl border border-border bg-gradient-to-br from-primary/10 via-background to-accent/10 p-7">
@@ -179,8 +181,13 @@ function Dashboard() {
                   ))
                 ) : (
                   <EmptyState
-                    text="No documents yet. Upload your first PDF, Word file or notes."
-                    ctaLabel="Upload a document"
+                    title="No documents yet"
+                    description="Upload your first PDF, Word file or notes and Lumen will take it from there."
+                    action={
+                      <Button asChild size="sm">
+                        <Link to="/upload">Upload a document</Link>
+                      </Button>
+                    }
                   />
                 )}
               </CardContent>
@@ -212,9 +219,13 @@ function Dashboard() {
                     </div>
                   ))
                 ) : (
-                  <p className="py-6 text-center text-sm text-muted-foreground">
-                    Your AI activity will appear here.
-                  </p>
+                  <EmptyState
+                    compact
+                    illustration={false}
+                    icon={Sparkles}
+                    title="Nothing here yet"
+                    description="Summaries, study sets and chats will show up here as you use them."
+                  />
                 )}
               </CardContent>
             </Card>
@@ -283,17 +294,5 @@ function QuickAction({
       <p className="mt-3 text-sm font-semibold">{title}</p>
       <p className="mt-1 text-xs text-muted-foreground">{text}</p>
     </Link>
-  );
-}
-
-function EmptyState({ text, ctaLabel }: { text: string; ctaLabel: string }) {
-  return (
-    <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border px-6 py-10 text-center">
-      <FileText className="h-8 w-8 text-muted-foreground/60" />
-      <p className="text-sm text-muted-foreground">{text}</p>
-      <Button asChild size="sm">
-        <Link to="/upload">{ctaLabel}</Link>
-      </Button>
-    </div>
   );
 }

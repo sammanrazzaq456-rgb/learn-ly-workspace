@@ -9,6 +9,7 @@ import { AppShell } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { friendlyErrorMessage } from "@/components/states";
 import { supabase } from "@/integrations/supabase/client";
 import { AI_MODE_LABEL, type AiMode } from "@/lib/ai-modes";
 import {
@@ -104,7 +105,7 @@ function Processing() {
         });
       } catch (runError) {
         if (cancelled.current) return;
-        const message = runError instanceof Error ? runError.message : "Processing failed";
+        const message = friendlyErrorMessage(runError, "Processing failed");
         setError(message);
         await supabase
           .from("documents")
