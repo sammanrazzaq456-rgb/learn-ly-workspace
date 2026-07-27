@@ -145,17 +145,16 @@ export const generateStudyMaterials = createServerFn({ method: "POST" })
         output: Output.object({
           schema: z.object({
             notes: z.string(),
-            flashcards: z.array(z.object({ front: z.string(), back: z.string() }))),
-            mcqs: z
-              .array(
-                z.object({
-                  question: z.string(),
-                  options: z.array(z.string()).length(4),
-                  answerIndex: z.number().int(),
-                  explanation: z.string(),
-                }),
-              )
-              ,
+            flashcards: z.array(z.object({ front: z.string(), back: z.string() })),
+            mcqs: z.array(
+              z.object({
+                question: z.string(),
+                options: z.array(z.string()),
+                answerIndex: z.number().int(),
+                explanation: z.string(),
+              }),
+            ),
+
             shortQuestions: z.array(z.object({ question: z.string(), answer: z.string() })),
             longQuestions: z.array(z.object({ question: z.string(), answer: z.string() })),
           }),
