@@ -93,20 +93,36 @@ export function ExplainPanel({ documentId, content }: { documentId: string; cont
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
           <CardContent className="space-y-2 pt-6">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              Original text
-            </p>
-            <Textarea
-              value={passage}
-              onChange={(event) => setPassage(event.target.value)}
-              className="min-h-[26rem] font-mono text-xs leading-relaxed"
-              maxLength={12000}
-            />
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                Original text
+              </p>
+              {terms.length > 0 ? (
+                <Button variant="ghost" size="sm" onClick={() => setEditing((value) => !value)}>
+                  {editing ? "Show highlights" : "Edit passage"}
+                </Button>
+              ) : null}
+            </div>
+            {editing || terms.length === 0 ? (
+              <Textarea
+                value={passage}
+                onChange={(event) => setPassage(event.target.value)}
+                className="min-h-[26rem] font-mono text-xs leading-relaxed"
+                maxLength={12000}
+              />
+            ) : (
+              <div className="max-h-[26rem] overflow-y-auto whitespace-pre-wrap rounded-xl border border-border p-3 font-mono text-xs leading-relaxed">
+                <HighlightedText text={data?.original_text ?? passage} terms={terms} />
+              </div>
+            )}
             <p className="text-xs text-muted-foreground">
-              Paste or edit the passage you want explained.
+              {editing || terms.length === 0
+                ? "Paste or edit the passage you want explained."
+                : "Difficult terms are highlighted — hover to see the definition."}
             </p>
           </CardContent>
         </Card>
+
 
         <Card>
           <CardContent className="pt-6">
