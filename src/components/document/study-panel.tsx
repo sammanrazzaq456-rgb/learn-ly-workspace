@@ -310,3 +310,68 @@ function QAList({ items }: { items: QA[] }) {
 function Empty({ text }: { text: string }) {
   return <EmptyState compact illustration={false} icon={Brain} title={text} />;
 }
+
+function AnswerKey({
+  mcqs,
+  shortQuestions,
+  longQuestions,
+}: {
+  mcqs: Mcq[];
+  shortQuestions: QA[];
+  longQuestions: QA[];
+}) {
+  if (mcqs.length === 0 && shortQuestions.length === 0 && longQuestions.length === 0)
+    return <Empty text="No answer key for this set yet." />;
+
+  return (
+    <div className="space-y-4">
+      {mcqs.length > 0 ? (
+        <Card>
+          <CardContent className="space-y-3 pt-6">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Multiple choice
+            </p>
+            <ol className="space-y-3">
+              {mcqs.map((item, index) => (
+                <li key={index} className="text-sm">
+                  <span className="font-medium">{index + 1}. </span>
+                  <span className="text-accent">{item.options[item.answerIndex]}</span>
+                  {item.explanation ? (
+                    <p className="mt-1 text-xs text-muted-foreground">{item.explanation}</p>
+                  ) : null}
+                </li>
+              ))}
+            </ol>
+          </CardContent>
+        </Card>
+      ) : null}
+
+      {[
+        { title: "Short questions", items: shortQuestions },
+        { title: "Long questions", items: longQuestions },
+      ].map(({ title, items }) =>
+        items.length > 0 ? (
+          <Card key={title}>
+            <CardContent className="space-y-3 pt-6">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                {title}
+              </p>
+              <ol className="space-y-4">
+                {items.map((item, index) => (
+                  <li key={index}>
+                    <p className="text-sm font-medium">
+                      {index + 1}. {item.question}
+                    </p>
+                    <div className="mt-1 rounded-xl bg-muted/60 p-3">
+                      <Markdown content={item.answer} />
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </CardContent>
+          </Card>
+        ) : null,
+      )}
+    </div>
+  );
+}
