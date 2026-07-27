@@ -145,19 +145,19 @@ export const generateStudyMaterials = createServerFn({ method: "POST" })
         output: Output.object({
           schema: z.object({
             notes: z.string(),
-            flashcards: z.array(z.object({ front: z.string(), back: z.string() })).min(6),
+            flashcards: z.array(z.object({ front: z.string(), back: z.string() }))),
             mcqs: z
               .array(
                 z.object({
                   question: z.string(),
                   options: z.array(z.string()).length(4),
-                  answerIndex: z.number().int().min(0).max(3),
+                  answerIndex: z.number().int(),
                   explanation: z.string(),
                 }),
               )
-              .min(5),
-            shortQuestions: z.array(z.object({ question: z.string(), answer: z.string() })).min(4),
-            longQuestions: z.array(z.object({ question: z.string(), answer: z.string() })).min(2),
+              ,
+            shortQuestions: z.array(z.object({ question: z.string(), answer: z.string() })),
+            longQuestions: z.array(z.object({ question: z.string(), answer: z.string() })),
           }),
         }),
         prompt: `Build study material from this document. Notes in markdown, 10 flashcards, 8 multiple-choice questions with 4 options each, 5 short questions and 3 long questions with model answers.\n\nDocument: ${doc.file_name}\n\n${clampContent(doc.content)}`,
@@ -302,7 +302,7 @@ export const suggestQuestions = createServerFn({ method: "POST" })
       const { output } = await generateText({
         model: getGateway()(DEFAULT_MODEL),
         system: SYSTEM,
-        output: Output.object({ schema: z.object({ questions: z.array(z.string()).max(4) }) }),
+        output: Output.object({ schema: z.object({ questions: z.array(z.string()) }) }),
         prompt: `Suggest 4 short, useful questions a student might ask about this document.\n\n${clampContent(doc.content, 12000)}`,
       });
       return output.questions;
