@@ -128,7 +128,16 @@ export function StudyPanel({ documentId }: { documentId: string }) {
         <TabsContent value="long" className="mt-4">
           <QAList items={longQuestions} />
         </TabsContent>
+
+        <TabsContent value="key" className="mt-4">
+          <AnswerKey
+            mcqs={mcqs}
+            shortQuestions={shortQuestions}
+            longQuestions={longQuestions}
+          />
+        </TabsContent>
       </Tabs>
+
     </div>
   );
 }
