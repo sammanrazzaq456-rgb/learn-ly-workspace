@@ -1,4 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
 import { Loader2, MessagesSquare, Quote, Send } from "lucide-react";
@@ -10,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { EmptyState, ErrorState, friendlyErrorMessage } from "@/components/states";
 import { supabase } from "@/integrations/supabase/client";
 import { askDocument, suggestQuestions } from "@/lib/ai.functions";
+import { cn } from "@/lib/utils";
 
 export function ChatPanel({ documentId }: { documentId: string }) {
   const queryClient = useQueryClient();
@@ -136,4 +138,49 @@ export function ChatPanel({ documentId }: { documentId: string }) {
     </div>
   );
 
+}
+
+function DocumentSwitcher({ documentId }: { documentId: string }) {
+  const { data: documents } = useQuery({
+    queryKey: ["chat-documents"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("documents")
+        .select("id, file_name, file_type")
+        .order("created_at", { ascending: false })
+        .limit(30);
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  return (
+    <aside className="rounded-2xl border border-border p-3">
+      <p className="flex items-center gap-2 px-1 pb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        <MessagesSquare className="h-3.5 w-3.5" /> Your documents
+      </p>
+      <div className="max-h-[28rem] space-y-1 overflow-y-auto">
+        {documents && documents.length > 0 ? (
+          documents.map((item) => (
+            <Link
+              key={item.id}
+              to="/documents/$documentId"
+              params={{ documentId: item.id }}
+              search={{ tab: "chat" as const }}
+              className={cn(
+                "block truncate rounded-lg px-3 py-2 text-sm transition-colors",
+                item.id === documentId
+                  ? "bg-primary/10 font-medium text-primary"
+                  : "text-muted-foreground hover:bg-muted",
+              )}
+            >
+              {item.file_name}
+            </Link>
+          ))
+        ) : (
+          <p className="px-3 py-2 text-xs text-muted-foreground">No documents yet.</p>
+        )}
+      </div>
+    </aside>
+  );
 }
