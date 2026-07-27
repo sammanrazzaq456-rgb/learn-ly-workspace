@@ -59,7 +59,10 @@ export function ChatPanel({ documentId }: { documentId: string }) {
   }
 
   return (
-    <div className="flex min-h-[32rem] flex-col rounded-2xl border border-border">
+    <div className="grid gap-4 lg:grid-cols-[16rem_1fr]">
+      <DocumentSwitcher documentId={documentId} />
+      <div className="flex min-h-[32rem] flex-col rounded-2xl border border-border">
+
       <div className="flex-1 space-y-4 overflow-y-auto p-5">
         {isError ? (
           <ErrorState title="We couldn't load this conversation" onRetry={() => refetch()} />
