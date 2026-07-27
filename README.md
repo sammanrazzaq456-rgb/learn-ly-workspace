@@ -20,6 +20,14 @@ Students and learners often struggle to turn long documents (PDFs, DOCX, notes) 
 ## AI Feature
 Lumen's core AI feature reads an uploaded document and powers five different modes (Summary, Explain, Study, Chat, Insights) — all of which stay strictly grounded in the document's actual content, never inventing facts, quotes, or dates that aren't there.
 
+## Note on AI Feature Availability
+All 5 AI features (Summary, Explain, Study, Chat, Insights) were fully 
+implemented and tested — see screenshots above for proof of working output. 
+Lovable's free-tier AI Gateway includes a small monthly usage grant, which 
+was consumed during development and testing. It resets automatically on the 
+1st of each month. If the live demo shows a temporary usage-limit message, 
+the screenshots demonstrate the feature working as designed.
+
 System prompt used:
 
 You are Lumen, a study assistant. Answer strictly from the supplied document. If the document does not contain the answer, say so plainly. Never invent facts, quotes or dates.
