@@ -167,3 +167,36 @@ export function ExplainPanel({ documentId, content }: { documentId: string; cont
     </div>
   );
 }
+
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function HighlightedText({ text, terms }: { text: string; terms: Term[] }) {
+  const unique = terms.filter((item) => item.term?.trim()).slice(0, 60);
+  if (unique.length === 0) return <>{text}</>;
+
+  const pattern = new RegExp(
+    `(${unique.map((item) => escapeRegExp(item.term.trim())).join("|")})`,
+    "gi",
+  );
+  const parts = text.split(pattern);
+
+  return (
+    <>
+      {parts.map((part, index) => {
+        const match = unique.find((item) => item.term.trim().toLowerCase() === part.toLowerCase());
+        if (!match) return <span key={index}>{part}</span>;
+        return (
+          <mark
+            key={index}
+            title={match.definition}
+            className="cursor-help rounded bg-accent/25 px-0.5 text-foreground underline decoration-accent decoration-dotted underline-offset-2"
+          >
+            {part}
+          </mark>
+        );
+      })}
+    </>
+  );
+}
