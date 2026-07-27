@@ -22,6 +22,8 @@ export function ExplainPanel({ documentId, content }: { documentId: string; cont
   const [level, setLevel] = useState<Level>("intermediate");
   const [passage, setPassage] = useState(content.slice(0, 1500));
   const [busy, setBusy] = useState(false);
+  const [editing, setEditing] = useState(false);
+
 
   const { data } = useQuery({
     queryKey: ["explanations", documentId],
