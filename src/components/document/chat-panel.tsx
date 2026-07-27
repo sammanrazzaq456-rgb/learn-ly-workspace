@@ -132,6 +132,8 @@ export function ChatPanel({ documentId }: { documentId: string }) {
           <Send className="h-4 w-4" />
         </Button>
       </form>
+      </div>
     </div>
   );
+
 }
