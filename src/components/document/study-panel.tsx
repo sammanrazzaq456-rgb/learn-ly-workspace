@@ -101,7 +101,9 @@ export function StudyPanel({ documentId }: { documentId: string }) {
           <TabsTrigger value="mcqs">MCQs</TabsTrigger>
           <TabsTrigger value="short">Short questions</TabsTrigger>
           <TabsTrigger value="long">Long questions</TabsTrigger>
+          <TabsTrigger value="key">Answer key</TabsTrigger>
         </TabsList>
+
 
         <TabsContent value="notes" className="mt-4">
           <Card>
