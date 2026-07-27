@@ -22,6 +22,8 @@ export function ExplainPanel({ documentId, content }: { documentId: string; cont
   const [level, setLevel] = useState<Level>("intermediate");
   const [passage, setPassage] = useState(content.slice(0, 1500));
   const [busy, setBusy] = useState(false);
+  const [editing, setEditing] = useState(false);
+
 
   const { data } = useQuery({
     queryKey: ["explanations", documentId],
@@ -93,20 +95,36 @@ export function ExplainPanel({ documentId, content }: { documentId: string; cont
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
           <CardContent className="space-y-2 pt-6">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              Original text
-            </p>
-            <Textarea
-              value={passage}
-              onChange={(event) => setPassage(event.target.value)}
-              className="min-h-[26rem] font-mono text-xs leading-relaxed"
-              maxLength={12000}
-            />
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                Original text
+              </p>
+              {terms.length > 0 ? (
+                <Button variant="ghost" size="sm" onClick={() => setEditing((value) => !value)}>
+                  {editing ? "Show highlights" : "Edit passage"}
+                </Button>
+              ) : null}
+            </div>
+            {editing || terms.length === 0 ? (
+              <Textarea
+                value={passage}
+                onChange={(event) => setPassage(event.target.value)}
+                className="min-h-[26rem] font-mono text-xs leading-relaxed"
+                maxLength={12000}
+              />
+            ) : (
+              <div className="max-h-[26rem] overflow-y-auto whitespace-pre-wrap rounded-xl border border-border p-3 font-mono text-xs leading-relaxed">
+                <HighlightedText text={data?.original_text ?? passage} terms={terms} />
+              </div>
+            )}
             <p className="text-xs text-muted-foreground">
-              Paste or edit the passage you want explained.
+              {editing || terms.length === 0
+                ? "Paste or edit the passage you want explained."
+                : "Difficult terms are highlighted — hover to see the definition."}
             </p>
           </CardContent>
         </Card>
+
 
         <Card>
           <CardContent className="pt-6">
@@ -147,5 +165,38 @@ export function ExplainPanel({ documentId, content }: { documentId: string; cont
         </Card>
       </div>
     </div>
+  );
+}
+
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function HighlightedText({ text, terms }: { text: string; terms: Term[] }) {
+  const unique = terms.filter((item) => item.term?.trim()).slice(0, 60);
+  if (unique.length === 0) return <>{text}</>;
+
+  const pattern = new RegExp(
+    `(${unique.map((item) => escapeRegExp(item.term.trim())).join("|")})`,
+    "gi",
+  );
+  const parts = text.split(pattern);
+
+  return (
+    <>
+      {parts.map((part, index) => {
+        const match = unique.find((item) => item.term.trim().toLowerCase() === part.toLowerCase());
+        if (!match) return <span key={index}>{part}</span>;
+        return (
+          <mark
+            key={index}
+            title={match.definition}
+            className="cursor-help rounded bg-accent/25 px-0.5 text-foreground underline decoration-accent decoration-dotted underline-offset-2"
+          >
+            {part}
+          </mark>
+        );
+      })}
+    </>
   );
 }
